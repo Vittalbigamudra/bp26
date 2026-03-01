@@ -19,7 +19,7 @@
   }
 </script>
 
-<div class="min-h-screen bg-[#0d1117] text-slate-200">
+<div class="min-h-screen bg-[#000000] text-slate-200">
 
   <NavBar />
 
@@ -54,7 +54,6 @@
       </div>
     </div>
 
-    <!-- Right: Illustration Placeholder -->
     <div class="flex justify-center md:justify-end">
       <img src=src/lib/assets/front_page_image.png 
             alt="Busman Illustration"
