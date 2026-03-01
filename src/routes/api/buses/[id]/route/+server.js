@@ -1,26 +1,38 @@
-import db from "$lib/db/sqlite.js";
+import { json } from '@sveltejs/kit';
+import fs from 'fs';
+import csv from 'csv-parser';
+import path from 'path';
 
-// GET /api/buses/[id]/route
-// Returns the list of stops with coordinates for a particular bus, same as
-// the generic /api/[id]/routes endpoint but under the /buses namespace.
-//
-// Inputs:
-//   - params.id: the bus ID from the route
-//
-// Output (JSON): [{ name, lat, lng, time }, ...] sorted by time.
-// If there are no stops, returns an empty array.
-export function GET({ params }) {
-    const id = params.id;
+export async function GET({ params }) {
+    const busId = String(params.id); // Ensure we are comparing strings
+    const stops = [];
 
-    const stops = db.query(`
-        SELECT stop_name AS name,
-               latitude AS lat,
-               longitude AS lng,
-               pickup_time AS time
-        FROM bus_stops
-        WHERE bus_id = ?
-        ORDER BY time ASC
-    `).all(id);
+    // Use absolute path to ensure the server finds the file
+    const csvPath = path.resolve('src/lib/assets/bus_stops.csv');
 
-    return new Response(JSON.stringify(stops));
+    return new Promise((resolve) => {
+        if (!fs.existsSync(csvPath)) {
+            console.error("CSV File not found at:", csvPath);
+            return resolve(json([], { status: 404 }));
+        }
+
+        fs.createReadStream(csvPath)
+            .pipe(csv())
+            .on('data', (row) => {
+                // IMPORTANT: Match the column name in your CSV exactly
+                if (String(row.bus_id) === busId) {
+                    stops.push({
+                        name: row.name,
+                        lat: parseFloat(row.lat),
+                        lng: parseFloat(row.lng),
+                        time: row.pickup_time
+                    });
+                }
+            })
+            .on('end', () => {
+                // Sort by time so the route line is drawn in the right order
+                stops.sort((a, b) => a.time.localeCompare(b.time));
+                resolve(json(stops));
+            });
+    });
 }

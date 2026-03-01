@@ -4,55 +4,92 @@
 
     let map;
     let markers = {};
-
-    let buses = {};          // live GPS
-    let busStatus = {};      // on-route / completed
+    let buses = {};          
+    let busStatus = {};      
     let selectedBus = null;
     let busDetails = null;
     let messages = [];
+    let pendingAccounts = [];
 
-    let routeLayerId = "bus-route";
-    let routeSourceId = "bus-route-source";
+    const routeLayerId = "bus-route";
+    const routeSourceId = "bus-route-source";
     const MAPTILER_KEY = "8G5oreAn1PJYGuI6Xgi9";
 
-    async function fetchRoadRoute(stops) {
-        // Fetch the actual road route from OSRM (Open Source Routing Machine)
-        if (stops.length < 2) return null;
-
-        const coords = stops.map(s => `${s.lng},${s.lat}`).join(";");
-        const url = `https://router.project-osrm.org/route/v1/driving/${coords}?geometries=geojson`;
-
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.routes && data.routes[0] && data.routes[0].geometry) {
-                return data.routes[0].geometry.coordinates; // [lng, lat] pairs
-            }
-        } catch (err) {
-            console.error("Error fetching road route:", err);
+    // Helper for map layering
+    function getFirstLabelLayerId() {
+        if (!map) return null;
+        const layers = map.getStyle().layers;
+        for (let i = 0; i < layers.length; i++) {
+            if (layers[i].type === 'symbol') return layers[i].id;
         }
         return null;
     }
 
-    async function fetchBusLocations() {
-        const res = await fetch("/api/buses/live");
-        const rows = await res.json();
+    // Helper to format seconds into HH:MM AM/PM
+    function formatETA(secondsToAdd) {
+        const now = new Date();
+        const etaDate = new Date(now.getTime() + secondsToAdd * 1000);
+        return etaDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
 
-        // Normalize array of rows into object keyed by bus_id
-        const normalized = {};
-        for (const r of rows) {
-            // some rows may use latitude/longitude keys
-            const lat = Number(r.latitude ?? r.lat ?? r.latitude);
-            const lng = Number(r.longitude ?? r.lng ?? r.long ?? r.longitude);
-            const id = String(r.bus_id ?? r.id ?? r.busId);
+    async function fetchRoadRoute(stops) {
+    if (!stops || stops.length < 2) return null;
 
-            if (!isFinite(lat) || !isFinite(lng) || !id) continue;
+    // 1. CLEAN THE DATA: Strip out Zip Codes and Nulls
+    const validCoords = stops
+        .map(s => {
+            const lng = parseFloat(s.lng || s.longitude);
+            const lat = parseFloat(s.lat || s.latitude);
+            return { lng, lat };
+        })
+        .filter(c => 
+            !isNaN(c.lng) && 
+            !isNaN(c.lat) && 
+            Math.abs(c.lat) <= 90 && // Latitude MUST be between -90 and 90
+            c.lat !== 30004          // Explicitly block the Zip Code if it slips through
+        );
 
-            normalized[id] = { lat, lng, updated_at: r.updated_at };
+    // 2. SAFETY CHECK: If we don't have at least 2 points, OSRM will fail
+    if (validCoords.length < 2) {
+        console.warn("Not enough valid coordinates for OSRM");
+        return null;
+    }
+
+    // 3. BUILD URL: Longitude FIRST, then Latitude
+    const coordsString = validCoords.map(c => `${c.lng},${c.lat}`).join(";");
+    const url = `https://router.project-osrm.org/route/v1/driving/${coordsString}?geometries=geojson&overview=full`;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (data.code === 'Ok' && data.routes && data.routes[0]) {
+            return data.routes[0].geometry.coordinates; 
+        } else {
+            console.error("OSRM Error:", data.code);
         }
+    } catch (err) {
+        console.error("Network error fetching road route:", err);
+    }
+    return null;
+}
 
-        buses = normalized;
-        updateMarkers();
+    async function fetchBusLocations() {
+        try {
+            const res = await fetch("/api/buses/live");
+            const rows = await res.json();
+            const normalized = {};
+            for (const r of rows) {
+                const id = String(r.bus_id ?? r.id);
+                normalized[id] = { 
+                    lat: Number(r.latitude ?? r.lat), 
+                    lng: Number(r.longitude ?? r.lng),
+                    updated_at: r.updated_at 
+                };
+            }
+            buses = normalized;
+            updateMarkers();
+        } catch (e) { console.error(e); }
     }
 
     async function fetchBusStatus() {
@@ -61,150 +98,125 @@
     }
 
     async function fetchBusDetails(id) {
-        const res = await fetch(`/api/buses/${id}/details`);
-        busDetails = await res.json();
-        selectedBus = id;
+        selectedBus = String(id);
+        try {
+            const [dRes, rRes] = await Promise.all([
+                fetch(`/api/buses/${selectedBus}/details`),
+                fetch(`/api/buses/${selectedBus}/route`)
+            ]);
+            busDetails = await dRes.json();
+            const stops = await rRes.json();
 
-        const routeRes = await fetch(`/api/buses/${id}/route`);
-        const stops = await routeRes.json();
+            const gps = buses[selectedBus];
+            let target = (busDetails.nextStop && busDetails.nextStop.lat) ? busDetails.nextStop : (stops[0] || null);
 
-        drawRoute(stops);
+            if (gps && target && target.lat) {
+                const osrmRes = await fetch(`https://router.project-osrm.org/route/v1/driving/${gps.lng},${gps.lat};${target.lng},${target.lat}?overview=false`);
+                const data = await osrmRes.json();
+                if (data.routes?.[0]) {
+                    busDetails = { ...busDetails, nextStop: target, eta: formatETA(data.routes[0].duration) };
+                }
+            } else {
+                busDetails.eta = "Stationary";
+            }
+            drawRoute(stops.length > 0 ? stops : (target ? [target] : []));
+        } catch (err) { console.error(err); }
     }
 
     function updateMarkers() {
-        // Add/update markers only for valid numeric coordinates
-        for (const id in buses) {
-            const bus = buses[id];
-            if (!isFinite(bus.lat) || !isFinite(bus.lng)) {
-                // remove any existing invalid marker
-                if (markers[id]) {
-                    try { markers[id].remove(); } catch (e) {}
-                    delete markers[id];
-                }
-                continue;
-            }
-
-            const coords = [bus.lng, bus.lat];
-
+        if (!map) return;
+        Object.entries(buses).forEach(([id, bus]) => {
             if (!markers[id]) {
-                markers[id] = new maplibre.Marker({ color: "#E94822" })
-                    .setLngLat(coords)
-                    .addTo(map);
+                markers[id] = new maplibre.Marker({ color: "#E94822" }).setLngLat([bus.lng, bus.lat]).addTo(map);
             } else {
-                markers[id].setLngLat(coords);
+                markers[id].setLngLat([bus.lng, bus.lat]);
             }
-        }
-
-        // Remove markers for buses no longer present
-        for (const id in Object.keys(markers)) {
-            if (!buses[id]) {
-                try { markers[id].remove(); } catch (e) {}
-                delete markers[id];
-            }
-        }
+        });
     }
 
     function drawRoute(stops) {
-        fetchRoadRoute(stops).then(roadCoords => {
-            if (map.getLayer(routeLayerId)) map.removeLayer(routeLayerId);
-            if (map.getSource(routeSourceId)) map.removeSource(routeSourceId);
+    if (!map || !map.isStyleLoaded() || !stops || stops.length < 1) return;
 
-            // Use road route if available, otherwise use straight lines
-            const coords = roadCoords || stops.map(s => [s.lng, s.lat]);
+    fetchRoadRoute(stops).then(roadCoords => {
+        // Fallback to straight lines if OSRM fails, but ensure [lng, lat] order
+        let coords = roadCoords || stops.map(s => [Number(s.lng), Number(s.lat)]);
 
-            map.addSource(routeSourceId, {
-                type: "geojson",
-                data: {
-                    type: "Feature",
-                    geometry: {
-                        type: "LineString",
-                        coordinates: coords
-                    }
-                }
-            });
-
-            map.addLayer({
-                id: routeLayerId,
-                type: "line",
-                source: routeSourceId,
-                paint: {
-                    "line-color": "#F2910A",
-                    "line-width": 5
-                }
-            });
-
-            // Fit map to bounds
-            const bounds = new maplibre.LngLatBounds();
-            stops.forEach(s => bounds.extend([s.lng, s.lat]));
-            map.fitBounds(bounds, { padding: 40 });
+        // SANITY CHECK: MapLibre crashes if Latitude > 90 or < -90
+        // We filter out any bad data and ensure the order is [longitude, latitude]
+        const validCoords = coords.filter(c => {
+            const lng = c[0];
+            const lat = c[1];
+            return isFinite(lng) && isFinite(lat) && lat >= -90 && lat <= 90;
         });
+
+        if (validCoords.length < 2) return;
+
+        if (map.getLayer(routeLayerId)) map.removeLayer(routeLayerId);
+        if (map.getSource(routeSourceId)) map.removeSource(routeSourceId);
+
+        map.addSource(routeSourceId, {
+            type: "geojson",
+            data: {
+                type: "Feature",
+                geometry: {
+                    type: "LineString",
+                    coordinates: validCoords
+                }
+            }
+        });
+
+        map.addLayer({
+            id: routeLayerId,
+            type: "line",
+            source: routeSourceId,
+            paint: {
+                "line-color": "#F2910A",
+                "line-width": 6,
+                "line-opacity": 0.8
+            }
+        }, getFirstLabelLayerId());
+
+        // Adjust camera to fit the route
+        const bounds = new maplibre.LngLatBounds();
+        validCoords.forEach(c => bounds.extend(c));
+        map.fitBounds(bounds, { padding: 50 });
+    });
+}
+
+    async function fetchMessages() {
+        const res = await fetch('/api/admin/messages');
+        if (res.ok) messages = await res.json();
+    }
+
+    async function fetchPending() {
+        const res = await fetch('/api/admin/pending');
+        if (res.ok) pendingAccounts = await res.json();
+    }
+
+    async function reject(id) {
+        await fetch("/api/admin/reject", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+        fetchPending();
     }
 
     onMount(() => {
         map = new maplibre.Map({
             container: "map",
-            style: "https://api.maptiler.com/maps/streets/style.json?key=8G5oreAn1PJYGuI6Xgi9",
+            style: `https://api.maptiler.com/maps/streets/style.json?key=${MAPTILER_KEY}`,
             center: [-84.2291, 34.1472],
             zoom: 12
         });
-
-        map.addControl(new maplibre.NavigationControl(), "top-left");
-
-        // avoid console noise if the style contains icons the dev server can't load
-        map.on('styleimagemissing', e => {
-            console.warn('style image missing:', e.id);
-            // if desired, supply a dummy icon:
-            // const img = new Image(); img.src = '/transparent.png'; map.addImage(e.id, img);
+        map.on('load', () => {
+            fetchBusLocations();
+            fetchBusStatus();
+            fetchMessages();
+            fetchPending();
         });
-
-        fetchBusLocations();
-        fetchBusStatus();
-
-        setInterval(fetchBusLocations, 3000);
-        setInterval(fetchBusStatus, 5000);
-        fetchMessages();
+        const i1 = setInterval(fetchBusLocations, 3000);
+        const i2 = setInterval(fetchBusStatus, 5000);
+        const i3 = setInterval(fetchPending, 5000);
+        return () => { clearInterval(i1); clearInterval(i2); clearInterval(i3); };
     });
-
-    async function fetchMessages() {
-        try {
-            const res = await fetch('/api/admin/messages');
-            if (res.ok) {
-                messages = await res.json();
-            } else {
-                console.error('Failed to fetch messages', res.status);
-            }
-        } catch (err) {
-            console.error('Error fetching messages:', err);
-        }
-    }
-    let pendingAccounts = [];
-
-async function fetchPending() {
-  const res = await fetch('/api/admin/pending');
-  if (res.ok) {
-    pendingAccounts = await res.json();
-  }
-}
-
-onMount(() => {
-  fetchPending();
-  setInterval(fetchPending, 5000);
-});
-async function reject(id) {
-  const res = await fetch("/api/admin/reject", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id })
-  });
-
-  if (res.ok) {
-    fetchPending(); // refresh list
-  }
-}
-
-
 </script>
-
 <div class="flex h-screen bg-[#2C2D34] text-white">
     <!-- Sidebar -->
     <div class="w-80 bg-[#2C2D34] border-r border-[#3A3B44] p-4 overflow-y-auto">

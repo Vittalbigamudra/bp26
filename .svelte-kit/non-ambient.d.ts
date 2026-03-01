@@ -27,20 +27,23 @@ export {};
 
 declare module "$app/types" {
 	export interface AppTypes {
-		RouteId(): "/" | "/about" | "/admin" | "/api" | "/api/admin" | "/api/admin/approve" | "/api/admin/pending" | "/api/admin/reject" | "/api/buses" | "/api/buses/live" | "/api/buses/status" | "/api/buses/[id]" | "/api/buses/[id]/details" | "/api/buses/[id]/route" | "/api/contact" | "/api/login" | "/api/schools" | "/api/signup" | "/api/sysadmin" | "/api/sysadmin/messages" | "/api/verify" | "/api/[id]" | "/api/[id]/details" | "/api/[id]/routes" | "/contact" | "/gps" | "/login" | "/signup" | "/sysadmin" | "/verify";
+		RouteId(): "/" | "/about" | "/admin" | "/api" | "/api/admin" | "/api/admin/approve" | "/api/admin/pending" | "/api/admin/reject" | "/api/buses" | "/api/buses/live" | "/api/buses/status" | "/api/buses/[id]" | "/api/buses/[id]/details" | "/api/buses/[id]/route" | "/api/bus" | "/api/bus/[busNumber]" | "/api/contact" | "/api/login" | "/api/schools" | "/api/signup" | "/api/student" | "/api/student/[userID]" | "/api/student/[userID]/overview" | "/api/sysadmin" | "/api/sysadmin/messages" | "/api/verify" | "/api/[id]" | "/api/[id]/details" | "/api/[id]/routes" | "/contact" | "/dashboard" | "/gps" | "/login" | "/signup" | "/student" | "/sysadmin" | "/verify";
 		RouteParams(): {
 			"/api/buses/[id]": { id: string };
 			"/api/buses/[id]/details": { id: string };
 			"/api/buses/[id]/route": { id: string };
+			"/api/bus/[busNumber]": { busNumber: string };
+			"/api/student/[userID]": { userID: string };
+			"/api/student/[userID]/overview": { userID: string };
 			"/api/[id]": { id: string };
 			"/api/[id]/details": { id: string };
 			"/api/[id]/routes": { id: string }
 		};
 		LayoutParams(): {
-			"/": { id?: string };
+			"/": { id?: string; busNumber?: string; userID?: string };
 			"/about": Record<string, never>;
 			"/admin": Record<string, never>;
-			"/api": { id?: string };
+			"/api": { id?: string; busNumber?: string; userID?: string };
 			"/api/admin": Record<string, never>;
 			"/api/admin/approve": Record<string, never>;
 			"/api/admin/pending": Record<string, never>;
@@ -51,10 +54,15 @@ declare module "$app/types" {
 			"/api/buses/[id]": { id: string };
 			"/api/buses/[id]/details": { id: string };
 			"/api/buses/[id]/route": { id: string };
+			"/api/bus": { id?: string; busNumber?: string };
+			"/api/bus/[busNumber]": { busNumber: string };
 			"/api/contact": Record<string, never>;
 			"/api/login": Record<string, never>;
 			"/api/schools": Record<string, never>;
 			"/api/signup": Record<string, never>;
+			"/api/student": { userID?: string };
+			"/api/student/[userID]": { userID: string };
+			"/api/student/[userID]/overview": { userID: string };
 			"/api/sysadmin": Record<string, never>;
 			"/api/sysadmin/messages": Record<string, never>;
 			"/api/verify": Record<string, never>;
@@ -62,13 +70,15 @@ declare module "$app/types" {
 			"/api/[id]/details": { id: string };
 			"/api/[id]/routes": { id: string };
 			"/contact": Record<string, never>;
+			"/dashboard": Record<string, never>;
 			"/gps": Record<string, never>;
 			"/login": Record<string, never>;
 			"/signup": Record<string, never>;
+			"/student": Record<string, never>;
 			"/sysadmin": Record<string, never>;
 			"/verify": Record<string, never>
 		};
-		Pathname(): "/" | "/about" | "/admin" | "/api/admin/approve" | "/api/admin/pending" | "/api/admin/reject" | "/api/buses/live" | "/api/buses/status" | `/api/buses/${string}/details` & {} | `/api/buses/${string}/route` & {} | "/api/contact" | "/api/login" | "/api/schools" | "/api/signup" | "/api/sysadmin/messages" | "/api/verify" | `/api/${string}/details` & {} | `/api/${string}/routes` & {} | "/contact" | "/gps" | "/login" | "/signup" | "/sysadmin" | "/verify";
+		Pathname(): "/" | "/about" | "/admin" | "/api/admin/approve" | "/api/admin/pending" | "/api/admin/reject" | "/api/buses/live" | "/api/buses/status" | `/api/buses/${string}/details` & {} | `/api/buses/${string}/route` & {} | `/api/bus/${string}` & {} | "/api/contact" | "/api/login" | "/api/schools" | "/api/signup" | "/api/student" | `/api/student/${string}/overview` & {} | "/api/sysadmin/messages" | "/api/verify" | `/api/${string}/details` & {} | `/api/${string}/routes` & {} | "/contact" | "/dashboard" | "/gps" | "/login" | "/signup" | "/student" | "/sysadmin" | "/verify";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
 		Asset(): "/robots.txt" | string & {};
 	}
