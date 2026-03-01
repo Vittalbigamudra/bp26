@@ -4,7 +4,7 @@
 
   function goToAuth() {
     // Navigate to the auth route using SvelteKit client navigation
-    goto("/auth");
+    goto("/login");
   }
 
   function goToSignup() {

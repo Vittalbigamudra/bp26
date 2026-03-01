@@ -1,32 +1,36 @@
-import db from "$lib/db/sqlite.js";
+import { json } from '@sveltejs/kit';
+import db from '$lib/server/db';
 
 export async function POST({ request }) {
-  try {
-    const { username, password, schoolId } = await request.json();
+  const { username, password, schoolName } = await request.json();
 
-    if (!username || !password || !schoolId) {
-      return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
-    }
-
-    // Example: check against a "users" table
-    const row = db
-      .query(
-        `SELECT id, username, password, school_id
-         FROM users
-         WHERE username = ? AND password = ? AND school_id = ?`
-      )
-      .get(username, password, schoolId);
-
-    if (!row) {
-      return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
-    }
-
-    return new Response(JSON.stringify({ ok: true, userId: row.id }), {
-      headers: { "Content-Type": "application/json" }
-    });
-
-  } catch (err) {
-    console.error("Login error:", err);
-    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
+  // Validate required fields
+  if (!username || !password || !schoolName) {
+    return json({ error: 'Missing fields' }, { status: 400 });
   }
+
+  // Check if user exists
+  const user = db.query(
+    `SELECT * FROM users
+     WHERE username = ? AND school_name = ?`
+  ).get(username, schoolName);
+
+  if (!user) {
+    return json({ error: "User not found or not approved" }, { status: 404 });
+  }
+
+  // Compare password (your DB stores password_hash)
+  if (user.password_hash !== password) {
+    return json({ error: "Incorrect password" }, { status: 401 });
+  }
+
+  return json({
+    success: true,
+    user: {
+      id: user.id,
+      username: user.username,
+      schoolName: user.school_name,
+      role: user.role
+    }
+  });
 }

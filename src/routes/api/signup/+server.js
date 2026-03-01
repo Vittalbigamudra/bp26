@@ -1,33 +1,42 @@
-import db from "$lib/db/sqlite.js";
+import { json } from '@sveltejs/kit';
+import db from '$lib/server/db';
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 export async function POST({ request }) {
-  try {
-    const { username, password, schoolId } = await request.json();
+  const { username, password, schoolName } = await request.json();
 
-    if (!username || !password || !schoolId) {
-      return new Response(JSON.stringify({ error: "Missing fields" }), { status: 400 });
-    }
-
-    // Check if username already exists
-    const existing = db
-      .query("SELECT id FROM users WHERE username = ?")
-      .get(username);
-
-    if (existing) {
-      return new Response(JSON.stringify({ error: "Username already taken" }), { status: 409 });
-    }
-
-    // Insert new user
-    db.query(
-      "INSERT INTO users (username, password, school_id) VALUES (?, ?, ?)"
-    ).run(username, password, schoolId);
-
-    return new Response(JSON.stringify({ ok: true }), {
-      headers: { "Content-Type": "application/json" }
-    });
-
-  } catch (err) {
-    console.error("Signup error:", err);
-    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
+  if (!username || !password || !schoolName) {
+    return json({ error: 'Missing fields' }, { status: 400 });
   }
+
+  // Check if user already exists
+  const existingQuery = db.query(`
+    SELECT id FROM users WHERE username = ? AND school_name = ?
+  `);
+
+  const existing = existingQuery.get(username, schoolName);
+
+  if (existing) {
+    return json({ error: 'Username already exists for this school' }, { status: 409 });
+  }
+
+  // Create OTP
+  const otp = generateOTP();
+
+  // Insert into pending_accounts
+  const insertQuery = db.query(`
+    INSERT INTO pending_accounts (username, password, school_name, otp)
+    VALUES (?, ?, ?, ?)
+  `);
+
+  insertQuery.run(username, password, schoolName, otp);
+
+  return json({
+    success: true,
+    message: "Account pending admin approval",
+    otpRequired: true
+  });
 }

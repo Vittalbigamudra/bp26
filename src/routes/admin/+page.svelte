@@ -177,6 +177,32 @@
             console.error('Error fetching messages:', err);
         }
     }
+    let pendingAccounts = [];
+
+async function fetchPending() {
+  const res = await fetch('/api/admin/pending');
+  if (res.ok) {
+    pendingAccounts = await res.json();
+  }
+}
+
+onMount(() => {
+  fetchPending();
+  setInterval(fetchPending, 5000);
+});
+async function reject(id) {
+  const res = await fetch("/api/admin/reject", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id })
+  });
+
+  if (res.ok) {
+    fetchPending(); // refresh list
+  }
+}
+
+
 </script>
 
 <div class="flex h-screen bg-[#2C2D34] text-white">
@@ -231,6 +257,38 @@
                 </div>
             {/each}
         {/if}
+        <h2 class="text-sm font-semibold mt-6 mb-2 text-[#EFD510] uppercase tracking-wide">
+  Pending Accounts
+</h2>
+
+{#each pendingAccounts as p}
+  <div class="bg-[#3A3B44] p-3 rounded mb-3 text-xs">
+    <div class="font-bold">{p.username}</div>
+    <div class="text-gray-300">{p.school_name}</div>
+    <div class="mt-1 text-[#EFD510]">OTP: {p.otp}</div>
+    <div class="mt-1 text-gray-400 text-[10px]">
+      {new Date(p.created_at).toLocaleString()}
+    </div>
+
+    <div class="flex gap-2 mt-3">
+      <button
+        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+        on:click={() => approve(p.id)}
+      >
+        Approve
+      </button>
+
+      <button
+        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+        on:click={() => reject(p.id)}
+      >
+        Reject
+      </button>
+    </div>
+  </div>
+{/each}
+
+
     </div>
 
     <!-- Map + Details -->
