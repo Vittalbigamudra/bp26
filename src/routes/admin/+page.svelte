@@ -217,7 +217,7 @@
         return () => { clearInterval(i1); clearInterval(i2); clearInterval(i3); };
     });
 </script>
-<div class="pixelfy-sans flex h-screen bg-[#2C2D34] text-white">
+<div class="pixelify-sans flex h-screen bg-[#2C2D34] text-white">
     <!-- Sidebar -->
     <div class="w-80 bg-[#2C2D34] border-r border-[#3A3B44] p-4 overflow-y-auto">
         <h1 class="text-xl font-bold mb-4 text-[#EFD510]">Admin Dashboard</h1>
