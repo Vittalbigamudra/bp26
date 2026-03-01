@@ -57,7 +57,7 @@
 <div class="relative min-h-screen bg-yellow-400 overflow-hidden flex items-center justify-center">
 
   <!-- Background Shapes -->
-  <div class="absolute top-10 left-10 w-24 h-24 bg-gray-800 rounded-full"></div>
+  <img class="absolute top-10 left-10 w-16 h-16" src="src/lib/assets/logodark.png" alt="dark logo"/>
   <div class="absolute -bottom-40 -left-40 w-125 h-125 bg-yellow-300 rounded-full opacity-80"></div>
   <div class="absolute top-0 -right-40 w-125 h-125 bg-yellow-300 rounded-full opacity-80"></div>
   <div class="absolute -bottom-20 -right-20 w-75 h-75 bg-yellow-300 rounded-full opacity-80"></div>

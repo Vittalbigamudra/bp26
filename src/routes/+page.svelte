@@ -1,7 +1,6 @@
 <script>
   import { goto } from "$app/navigation";
 
-
   function goToAuth() {
     // Navigate to the auth route using SvelteKit client navigation
     goto("/auth");
@@ -12,18 +11,23 @@
     // scrolling down by one viewport height.
     goto("/signup");
   }
+  let currentPath = "undefined";
+  if (typeof window !== 'undefined') {
+    const currentPath = window.location.pathname;
+  }
 </script>
 
 <div class="min-h-screen bg-[#0d1117] text-slate-200">
 
   <!-- Navbar -->
   <nav class="flex justify-between items-center px-12 py-6 border-b border-[#30363d] bg-[#0d1117]">
-    <h1 class="text-2xl font-semibold tracking-wide text-white">Busman</h1>
+    <!-- <h1 class="text-2xl font-semibold tracking-wide text-white">Busman</h1> -->
+    <img href="/" src="src\lib\assets\logo.png" alt="Busman Logo" class="h-8 w-auto" />
 
     <div class="space-x-8 text-sm uppercase tracking-wide text-slate-400">
-      <a href="/" class="hover:text-white transition">Home</a>
-      <a href="/about" class="hover:text-white transition">About</a>
-      <a href="/contact" class="hover:text-white transition">Contact</a>
+      <a href="/" class={(currentPath === 'undefined' | currentPath === "/") ? "text-[#E94822]" : "hover:text-white transition"}>Home</a>
+      <a href="/about" class={(currentPath === '/about') ? "text-[#E94822]" : "hover:text-white transition"}>About</a>
+      <a href="/contact" class={(currentPath === '/contact') ? "text-[#E94822]" : "hover:text-white transition"}>Contact</a>
     </div>
   </nav>
 
@@ -60,9 +64,10 @@
 
     <!-- Right: Illustration Placeholder -->
     <div class="flex justify-center md:justify-end">
-      <div class="w-full max-w-md h-64 bg-[#161b22] border border-[#30363d] rounded-xl flex items-center justify-center text-slate-500">
-        Image Placeholder
-      </div>
+      <img src=src\lib\assets\front_page_image.png 
+          alt="Busman Illustration"
+          class="w-full max-w-md h-64 bg-[#161b22] border border-[#30363d] rounded-xl flex items-center justify-center text-slate-500"
+      />
     </div>
 
   </section>
