@@ -1,0 +1,35 @@
+{
+	"name": "blueprint26",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "bun --bun vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^7.0.0",
+		"@sveltejs/kit": "^2.50.2",
+		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"@tailwindcss/forms": "^0.5.11",
+		"@tailwindcss/typography": "^0.5.19",
+		"@tailwindcss/vite": "^4.1.18",
+		"svelte": "^5.53.6",
+		"tailwindcss": "^4.1.18",
+		"vite": "^7.3.1"
+	},
+	"dependencies": {
+		"@onsvisual/svelte-maps": "^1.2.28",
+		"@tsparticles/svelte": "^3.1.1",
+		"csv-parser": "^3.2.0",
+		"dotenv": "^17.3.1",
+		"maplibre-gl": "^5.19.0",
+		"node-fetch": "^3.3.2",
+		"nodemailer": "^8.0.1",
+		"svelte-maps": "^0.0.1",
+		"tsparticles": "^3.9.1",
+		"tsparticles-engine": "^2.12.0"
+	}
+}

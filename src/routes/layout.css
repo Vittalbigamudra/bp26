@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+/* MapLibre styles are required for proper marker sizing and controls */
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+/* remove marker animation which causes icons to "slide" during zoom */
+:global(.maplibregl-marker) {
+	transition: none !important;
+}
+
+/* Popups sometimes also transition; disable if necessary */
+:global(.maplibregl-popup) {
+	transition: none !important;
+}
