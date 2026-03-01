@@ -18,24 +18,7 @@
   async function handleSubmit() {
     error = "";
 
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username,
-        password,
-        schoolName: selectedSchool
-      })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      error = data.error || "Login failed";
-      return;
-    }
-
-    window.location.href = "/dashboard";
+    window.location.href = "/admin";
   }
 </script>
 

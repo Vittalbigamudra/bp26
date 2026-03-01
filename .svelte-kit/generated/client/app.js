@@ -19,15 +19,15 @@ export const server_loads = [];
 
 export const dictionary = {
 		"/": [2],
-		"/about": [3],
-		"/admin": [4],
-		"/contact": [5],
-		"/dashboard": [6],
-		"/login": [7],
-		"/signup": [8],
-		"/student": [9],
-		"/sysadmin": [10],
-		"/verify": [11]
+		"/about": [9],
+		"/admin": [8],
+		"/contact": [11],
+		"/dashboard": [10],
+		"/login": [6],
+		"/signup": [4],
+		"/student": [7],
+		"/sysadmin": [5],
+		"/verify": [3]
 	};
 
 export const hooks = {
