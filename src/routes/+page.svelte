@@ -38,7 +38,7 @@
           on:click={goToAuth}
           class="px-7 py-3 rounded-lg bg-[#E94822] hover:bg-[#F2910A] text-black font-semibold transition"
         >
-          Sign In
+          Log In
         </button>
 
         <button
