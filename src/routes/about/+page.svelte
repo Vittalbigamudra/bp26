@@ -1,6 +1,6 @@
 <script>
 	// Lightweight About page for the app
-	const projectName = "Bus-Man.";
+	const projectName = "Busman.";
 	import NavBar from "$lib/components/NavBar.svelte";
 </script>
 
