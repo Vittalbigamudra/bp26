@@ -1,4 +1,5 @@
 <script>
+  import NavBar from "$lib/components/NavBar.svelte"; 
   let name = "";
   let email = "";
   let message = "";
@@ -35,7 +36,9 @@
   }
 </script>
 
-<section class="max-w-2xl mx-auto py-16 px-6 bg-[#0d1117] text-slate-200 rounded-lg border border-[#202428]">
+<div class="min-h-screen bg-[#0d1117] text-slate-200">
+<NavBar/>
+<section class="max-w-2xl mx-auto py-16 px-6 min-h-screen bg-[#0d1117] text-slate-200 border border-[#202428]">
   <h1 class="text-3xl font-bold mb-4">Contact Us</h1>
 
   <p class="text-slate-400 mb-6">Have a question or need support? Send us a message below.</p>
@@ -66,3 +69,4 @@
     </div>
   </form>
 </section>
+</div>  

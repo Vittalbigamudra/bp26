@@ -1,5 +1,6 @@
 <script>
   import { goto } from "$app/navigation";
+  import NavBar from "$lib/components/NavBar.svelte";
 
 
   function goToAuth() {
@@ -12,20 +13,15 @@
     // scrolling down by one viewport height.
     goto("/signup");
   }
+  let currentPath = "undefined";
+  if (typeof window !== 'undefined') {
+    const currentPath = window.location.pathname;
+  }
 </script>
 
 <div class="min-h-screen bg-[#0d1117] text-slate-200">
 
-  <!-- Navbar -->
-  <nav class="flex justify-between items-center px-12 py-6 border-b border-[#30363d] bg-[#0d1117]">
-    <h1 class="text-2xl font-semibold tracking-wide text-white">Busman</h1>
-
-    <div class="space-x-8 text-sm uppercase tracking-wide text-slate-400">
-      <a href="/" class="hover:text-white transition">Home</a>
-      <a href="/about" class="hover:text-white transition">About</a>
-      <a href="/contact" class="hover:text-white transition">Contact</a>
-    </div>
-  </nav>
+  <NavBar />
 
   <!-- Hero Section -->
   <section class="px-6 py-28 max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
@@ -33,7 +29,7 @@
     <!-- Left: Text -->
     <div>
       <h2 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight text-white">
-        Busman
+        Bus-Man.
       </h2>
 
       <p class="max-w-md text-slate-400 text-lg leading-relaxed mb-10">
@@ -60,16 +56,17 @@
 
     <!-- Right: Illustration Placeholder -->
     <div class="flex justify-center md:justify-end">
-      <div class="w-full max-w-md h-64 bg-[#161b22] border border-[#30363d] rounded-xl flex items-center justify-center text-slate-500">
-        Image Placeholder
-      </div>
+      <img src=src/lib/assets/front_page_image.png 
+            alt="Busman Illustration"
+          class="w-full max-w-md h-64 bg-[#161b22] border border-[#30363d] rounded-xl flex items-center justify-center text-slate-500"
+      />
     </div>
 
   </section>
 
   <!-- Secondary Section -->
   <section id="product" class="py-20 text-center border-t border-[#30363d] bg-[#0d1117]">
-    <h3 class="text-3xl font-semibold mb-4 text-white">Busman at a Glance</h3>
+    <h3 class="text-3xl font-semibold mb-4 text-white">Bus-Man. at a Glance</h3>
     <p class="text-slate-400 max-w-2xl mx-auto">
       Add quick highlights, metrics, or important system information here.
     </p>

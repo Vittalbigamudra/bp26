@@ -17,13 +17,13 @@ export const server_loads = [];
 
 export const dictionary = {
 		"/": [2],
-		"/about": [8],
-		"/admin": [7],
-		"/contact": [9],
+		"/about": [3],
+		"/admin": [4],
+		"/contact": [5],
 		"/login": [6],
-		"/signup": [4],
-		"/sysadmin": [5],
-		"/verify": [3]
+		"/signup": [7],
+		"/sysadmin": [8],
+		"/verify": [9]
 	};
 
 export const hooks = {
