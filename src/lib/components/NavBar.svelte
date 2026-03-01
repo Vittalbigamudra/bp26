@@ -10,7 +10,7 @@
 <!-- <h1 class="text-2xl font-semibold tracking-wide text-white">Busman</h1> -->
 <a href="/"><img src="src\lib\assets\logo.png" alt="Busman Logo" class="h-8 w-auto" /></a>
 
-<div class="space-x-8 text-sm uppercase tracking-wide text-slate-400">
+<div class="space-x-8 text-sm uppercase tracking-wide text-slate-400 pixelify-sans">
     <a href="/" class={(currentPath === 'undefined' || currentPath === "/") ? "text-[#E94822]" : "hover:text-white transition"}>Home</a>
     <a href="/about" class={(currentPath === '/about') ? "text-[#E94822]" : "hover:text-white transition"}>About</a>
     <a href="/contact" class={(currentPath === '/contact') ? "text-[#E94822]" : "hover:text-white transition"}>Contact</a>
