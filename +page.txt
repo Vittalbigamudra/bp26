@@ -68,20 +68,6 @@
         const routeRes = await fetch(`/api/buses/${id}/route`);
         const stops = await routeRes.json();
 
-        // --- NEW LOGGING CODE ---
-        console.log(`--- Route Destinations for Bus ${id} ---`);
-        if (stops && stops.length > 0) {
-            // Using console.table makes the list of stops very readable in the console
-            console.table(stops.map(stop => ({
-                Name: stop.name || "Unnamed Stop",
-                Latitude: stop.lat,
-                Longitude: stop.lng
-            })));
-        } else {
-            console.log("No stops found for this route.");
-        }
-        // -------------------------
-
         drawRoute(stops);
     }
 

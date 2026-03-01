@@ -10,18 +10,22 @@ export const nodes = [
 	() => import('./nodes/6'),
 	() => import('./nodes/7'),
 	() => import('./nodes/8'),
-	() => import('./nodes/9')
+	() => import('./nodes/9'),
+	() => import('./nodes/10'),
+	() => import('./nodes/11')
 ];
 
 export const server_loads = [];
 
 export const dictionary = {
 		"/": [2],
-		"/about": [8],
-		"/admin": [7],
-		"/contact": [9],
+		"/about": [9],
+		"/admin": [8],
+		"/contact": [11],
+		"/dashboard": [10],
 		"/login": [6],
 		"/signup": [4],
+		"/student": [7],
 		"/sysadmin": [5],
 		"/verify": [3]
 	};
