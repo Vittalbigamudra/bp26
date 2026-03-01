@@ -27,7 +27,7 @@ export {};
 
 declare module "$app/types" {
 	export interface AppTypes {
-		RouteId(): "/" | "/about" | "/admin" | "/api" | "/api/buses" | "/api/buses/live" | "/api/buses/status" | "/api/buses/[id]" | "/api/buses/[id]/details" | "/api/buses/[id]/route" | "/api/contact" | "/api/schools" | "/api/sysadmin" | "/api/sysadmin/messages" | "/api/[id]" | "/api/[id]/details" | "/api/[id]/routes" | "/auth" | "/contact" | "/gps" | "/sysadmin";
+		RouteId(): "/" | "/about" | "/admin" | "/api" | "/api/buses" | "/api/buses/live" | "/api/buses/status" | "/api/buses/[id]" | "/api/buses/[id]/details" | "/api/buses/[id]/route" | "/api/contact" | "/api/login" | "/api/schools" | "/api/signup" | "/api/sysadmin" | "/api/sysadmin/messages" | "/api/[id]" | "/api/[id]/details" | "/api/[id]/routes" | "/auth" | "/contact" | "/gps" | "/signup" | "/sysadmin";
 		RouteParams(): {
 			"/api/buses/[id]": { id: string };
 			"/api/buses/[id]/details": { id: string };
@@ -48,7 +48,9 @@ declare module "$app/types" {
 			"/api/buses/[id]/details": { id: string };
 			"/api/buses/[id]/route": { id: string };
 			"/api/contact": Record<string, never>;
+			"/api/login": Record<string, never>;
 			"/api/schools": Record<string, never>;
+			"/api/signup": Record<string, never>;
 			"/api/sysadmin": Record<string, never>;
 			"/api/sysadmin/messages": Record<string, never>;
 			"/api/[id]": { id: string };
@@ -57,9 +59,10 @@ declare module "$app/types" {
 			"/auth": Record<string, never>;
 			"/contact": Record<string, never>;
 			"/gps": Record<string, never>;
+			"/signup": Record<string, never>;
 			"/sysadmin": Record<string, never>
 		};
-		Pathname(): "/" | "/about" | "/admin" | "/api/buses/live" | "/api/buses/status" | `/api/buses/${string}/details` & {} | `/api/buses/${string}/route` & {} | "/api/contact" | "/api/schools" | "/api/sysadmin/messages" | `/api/${string}/details` & {} | `/api/${string}/routes` & {} | "/auth" | "/contact" | "/gps" | "/sysadmin";
+		Pathname(): "/" | "/about" | "/admin" | "/api/buses/live" | "/api/buses/status" | `/api/buses/${string}/details` & {} | `/api/buses/${string}/route` & {} | "/api/contact" | "/api/login" | "/api/schools" | "/api/signup" | "/api/sysadmin/messages" | `/api/${string}/details` & {} | `/api/${string}/routes` & {} | "/auth" | "/contact" | "/gps" | "/signup" | "/sysadmin";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
 		Asset(): "/robots.txt" | string & {};
 	}

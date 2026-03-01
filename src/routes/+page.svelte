@@ -1,28 +1,16 @@
 <script>
   import { goto } from "$app/navigation";
 
-  function goToLog() {
-    console.log("Live Log");
-  }
-
-  function goToMap() {
-    console.log("Live Map");
-  }
 
   function goToAuth() {
     // Navigate to the auth route using SvelteKit client navigation
     goto("/auth");
   }
 
-  function goToProduct() {
+  function goToSignup() {
     // Smooth-scroll to the product/feature section if present; fallback to
     // scrolling down by one viewport height.
-    const el = document.getElementById("product");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    } else {
-      window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
-    }
+    goto("/signup");
   }
 </script>
 
@@ -62,7 +50,7 @@
         </button>
 
         <button
-          on:click={goToProduct}
+          on:click={goToSignup}
           class="px-7 py-3 rounded-lg border border-[#30363d] hover:bg-[#161b22] transition font-semibold text-white"
         >
           Get Started
