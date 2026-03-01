@@ -9,7 +9,7 @@
   });
 </script>
 
-<div class="p-10 text-white bg-[#0d1117] min-h-screen">
+<div class="pixelfy-sans p-10 text-white bg-[#0d1117] min-h-screen">
   <h1 class="text-3xl font-bold mb-6">Sysadmin Messages</h1>
 
   {#if messages.length === 0}

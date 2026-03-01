@@ -16,20 +16,20 @@
   });
 
   async function handleSubmit() {
-    error = "";
+
 
     window.location.href = "/admin";
   }
 </script>
 
 
-<div class="relative min-h-screen bg-yellow-400 overflow-hidden flex items-center justify-center">
+<div class="pixelify-sans relative min-h-screen bg-yellow-400 overflow-hidden flex items-center justify-center">
 <a href="/"><img class="absolute top-10 left-10 w-16 h-16" src="src/lib/assets/logodark.png" alt="dark logo"/></a>
 <div class="absolute -bottom-40 -left-40 w-125 h-125 bg-yellow-300 rounded-full opacity-80"></div>
 <div class="absolute top-0 -right-40 w-125 h-125 bg-yellow-300 rounded-full opacity-80"></div>
 <div class="absolute -bottom-20 -right-20 w-75 h-75 bg-yellow-300 rounded-full opacity-80"></div>
   <div class="relative bg-gray-100 w-125 p-10 rounded-3xl shadow-md">
-    <h2 class="text-2xl font-semibold mb-6">Log In</h2>
+    <h2 class="jersey-10-regular text-2xl font-semibold mb-6">Log In</h2>
 
     {#if error}
       <p class="text-red-600 mb-4">{error}</p>
@@ -63,7 +63,7 @@
         type="submit"
         class="bg-orange-500 hover:bg-orange-600 text-black font-semibold px-6 py-2 rounded-xl transition"
       >
-        Sign In
+        Log In
       </button>
 
       <p class="text-sm text-gray-600 mt-2">

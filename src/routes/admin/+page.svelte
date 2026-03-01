@@ -217,7 +217,7 @@
         return () => { clearInterval(i1); clearInterval(i2); clearInterval(i3); };
     });
 </script>
-<div class="flex h-screen bg-[#2C2D34] text-white">
+<div class="pixelfy-sans flex h-screen bg-[#2C2D34] text-white">
     <!-- Sidebar -->
     <div class="w-80 bg-[#2C2D34] border-r border-[#3A3B44] p-4 overflow-y-auto">
         <h1 class="text-xl font-bold mb-4 text-[#EFD510]">Admin Dashboard</h1>
@@ -284,14 +284,14 @@
 
     <div class="flex gap-2 mt-3">
       <button
-        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded roboto-sans"
         on:click={() => approve(p.id)}
       >
         Approve
       </button>
 
       <button
-        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded roboto-sans"
         on:click={() => reject(p.id)}
       >
         Reject

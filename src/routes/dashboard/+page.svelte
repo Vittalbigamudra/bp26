@@ -66,7 +66,7 @@
   }
 </script>
 
-<div class="flex min-h-screen h-screen bg-[#0d1117] text-white">
+<div class="pixelfy-sans flex min-h-screen h-screen bg-[#0d1117] text-white">
   <div class="flex-1 relative">
     <div id="map" class="absolute inset-0"></div>
 
