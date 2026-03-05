@@ -8,6 +8,7 @@ USE THE CODE IN BRANCH "FULLY-WORKING"
 
 #1 Use npm install and npm run dev (or bun :thumbsdown:)
 
+
 Copyright © 2026 Vittal Bigamudra. All rights reserved.
 
 This software and all associated files, source code, assets, and documentation
