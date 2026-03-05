@@ -8,18 +8,23 @@ USE THE CODE IN BRANCH "FULLY-WORKING"
 
 #1 Use npm install and npm run dev (or bun :thumbsdown:)
 
-© 2026 Vittal Bigamudra and contributors.
-Primary author: Vittal Bigamudra.
+Copyright © 2026 Vittal Bigamudra. All rights reserved.
 
-This project is the original work of Vittal Bigamudra, with minor contributions
-from other collaborators. All substantial code, architecture, backend logic,
-frontend logic, database design, and project direction were created by
-Vittal Bigamudra.
+This software and all associated files, source code, assets, and documentation
+(collectively, the “Software”) are the exclusive property of Vittal Bigamudra.
 
-Redistribution, modification, or presentation of this project as someone else's
-work is strictly prohibited without explicit written permission from the
-primary author.
+No part of this Software may be used, copied, modified, merged, published,
+distributed, sublicensed, sold, or otherwise exploited in any form, in whole or
+in part, without the express written permission of the copyright holder.
 
-I do not claim copyright over the small CSS contributions written by other
-authors; those specific lines may be reused freely. These minimal contributions
-do not grant any contributor ownership or authorship over the project as a whole.
+Unauthorized use, reproduction, or distribution of this Software is strictly
+prohibited and may result in civil and criminal penalties.
+
+Minor CSS contributions by other authors remain their own property. These
+contributions do not grant any contributor ownership or authorship rights over
+the Software as a whole.
+
+This Software is provided solely for review and personal study. Any attempt to
+present, submit, or claim this Software as the work of anyone other than
+Vittal Bigamudra is strictly prohibited and constitutes copyright infringement
+and academic misconduct.
